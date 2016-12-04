@@ -9,6 +9,7 @@ typedef struct {
     union {
         struct { char* s; size_t len; }s;  /* string: null-terminated string, string length */
         double n;                          /* number */
+        int b;                             /* bool value */
     }u;
     lept_type type;
 }lept_value;
@@ -24,6 +25,7 @@ enum {
     LEPT_PARSE_INVALID_STRING_CHAR
 };
 
+// 这里模仿无返回值函数，使用者看到的是一个函数 故而定义在h文件中。
 #define lept_init(v) do { (v)->type = LEPT_NULL; } while(0)
 
 int lept_parse(lept_value* v, const char* json);

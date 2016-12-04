@@ -24,7 +24,7 @@ static void* lept_context_push(lept_context* c, size_t size) {
     void* ret;
     assert(size > 0);
     if (c->top + size >= c->size) {
-        if (c->size == 0)
+        if (c->size == 0)    // init stack
             c->size = LEPT_PARSE_STACK_INIT_SIZE;
         while (c->top + size >= c->size)
             c->size += c->size >> 1;  /* c->size * 1.5 */
@@ -92,6 +92,8 @@ static int lept_parse_string(lept_context* c, lept_value* v) {
     EXPECT(c, '\"');
     p = c->json;
     for (;;) {
+        // switch case 比if else 更清晰
+        // TODO 添加对 \n \r \t 之类的转义字符的parse
         char ch = *p++;
         switch (ch) {
             case '\"':
@@ -102,6 +104,8 @@ static int lept_parse_string(lept_context* c, lept_value* v) {
             case '\0':
                 c->top = head;
                 return LEPT_PARSE_MISS_QUOTATION_MARK;
+            case '\\':
+                break;
             default:
                 PUTC(c, ch);
         }
@@ -153,12 +157,17 @@ lept_type lept_get_type(const lept_value* v) {
 }
 
 int lept_get_boolean(const lept_value* v) {
-    /* \TODO */
-    return 0;
+    assert(v != NULL && (v->type == LEPT_TRUE || v->type == LEPT_FALSE));
+    return v->u.b;
 }
 
 void lept_set_boolean(lept_value* v, int b) {
-    /* \TODO */
+    assert(v != NULL);
+    v->u.b = b;
+    if (b == 0)
+        v->type = LEPT_FALSE;
+    else
+        v->type = LEPT_TRUE;
 }
 
 double lept_get_number(const lept_value* v) {
