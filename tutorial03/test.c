@@ -189,15 +189,22 @@ static void test_access_null() {
 static void test_access_boolean() {
     lept_value v;
     lept_init(&v);
+    lept_set_string(&v, "a", 1);
     lept_set_boolean(&v, 1);
     EXPECT_TRUE(lept_get_boolean(&v));
-    lept_init(&v);
+    // lept_init(&v);
     lept_set_boolean(&v, 0);
     EXPECT_FALSE(lept_get_boolean(&v));
+    lept_free(&v);
 }
 
 static void test_access_number() {
-    /* \TODO */
+    lept_value v;
+    lept_init(&v);
+    lept_set_string(&v, "a", 1);
+    lept_set_number(&v, 1.2345);
+    EXPECT_EQ_DOUBLE(1.2345, lept_get_number(&v));
+    lept_free(&v);
 }
 
 static void test_access_string() {
